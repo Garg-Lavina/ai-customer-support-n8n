@@ -3,21 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "path": "68426676-d8b2-4797-aca8-6b049ebdf68f",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -912,
-        -160
-      ],
-      "id": "a555b48b-1a6d-480c-b3e5-c363a565b989",
-      "name": "Webhook",
-      "webhookId": "68426676-d8b2-4797-aca8-6b049ebdf68f"
-    },
-    {
-      "parameters": {
         "assignments": {
           "assignments": [
             {
@@ -64,8 +49,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -480,
-        -160
+        -464,
+        -320
       ],
       "id": "b98496ef-33d6-4cdb-99e1-0f86f75956d3",
       "name": "Prepare Ticket"
@@ -77,8 +62,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -256,
-        -160
+        -240,
+        -320
       ],
       "id": "d5a073fb-c3af-4b40-9215-7c8882ad658b",
       "name": "Generate Ticket ID"
@@ -267,8 +252,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        864,
-        -160
+        880,
+        -320
       ],
       "id": "bee3c4bb-db01-4821-9bde-5b74637a6c61",
       "name": "Support Tickets",
@@ -301,8 +286,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        192,
-        -160
+        208,
+        -320
       ],
       "id": "56232311-c811-413e-b866-0e82be21e6d8",
       "name": "Call 'WF-3 Auto Assignment & SLA'"
@@ -329,8 +314,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        640,
-        -160
+        656,
+        -320
       ],
       "id": "adc994ec-0820-4c6f-a49f-7093c142ed78",
       "name": "Call 'WF-4 Customer Email Notification'"
@@ -357,8 +342,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        416,
-        -160
+        432,
+        -320
       ],
       "id": "c8c1b5ab-220f-429a-8d1e-2291706affb8",
       "name": "Call 'WF-5 High Priority Alert'"
@@ -385,8 +370,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -32,
-        -160
+        -16,
+        -320
       ],
       "id": "22d3a28a-f448-4ca1-890b-1c5616dc64c9",
       "name": "Call WF-2 AI Ticket Analysis"
@@ -407,17 +392,6 @@
   ],
   "pinData": {},
   "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Prepare Ticket",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Prepare Ticket": {
       "main": [
         [
@@ -507,7 +481,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "cb33ddaf-c08a-4f78-96dc-206e299c0f0c",
+  "versionId": "b093c1f0-2c09-4e9b-a280-91d06de267dd",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e057c5411c039ef29ce0ab6d9b9dc2bacf4e6e56675b10f50e409a4db54117c6"
