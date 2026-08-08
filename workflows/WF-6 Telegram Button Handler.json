@@ -560,7 +560,7 @@
     },
     {
       "parameters": {
-        "sendTo": "=lavina.garg2025@gmail.com",
+        "sendTo": "=your-email@example.com",
         "subject": "=🚨 Human Support Required | {{ $json.ticket_id }} | {{ $json.priority }} Priority",
         "emailType": "text",
         "message": "=Hello Support Team, \n\nA customer has requested assistance from a human support agent.  \n🎫 Ticket ID: {{ $json.ticket_id }} \n👤 Customer: {{ $json.customerName }} \n📧 Email: {{ $json.customerEmail }}  \n\n📂 Category: {{ $json.category }} \n⚡ Priority: {{ $json.priority }} \n🏢 Department: {{ $json.department }}  \n\n📝 Customer Issue: {{ $json.message }}  \n📊 Current Status: Escalated \n⏰ SLA: {{ $json.sla }}  \n\nPlease review the ticket and contact the customer for further assistance.  Regards, AI Customer Support System",
