@@ -50,7 +50,7 @@
     },
     {
       "parameters": {
-        "sendTo": "lavina.garg2025@gmail.com",
+        "sendTo": "your-email@example.com",
         "subject": "=🚨 High Priority Ticket: {{$json.ticket_id}}",
         "message": "=<h2>🚨 High Priority Support Ticket</h2>  \n<p>A new high-priority ticket requires immediate attention.</p>  \n<ul> <li><b>Ticket ID:</b> {{$json.ticket_id}}</li>\n<li><b>Customer:</b> {{$json.customerName}}</li> \n<li><b>Email:</b> {{$json.customerEmail}}</li> \n<li><b>Category:</b> {{$json.category}}</li> \n<li><b>Department:</b> {{$json.department}}</li> \n<li><b>Assigned Team:</b> {{$json.assigned_to}}</li> \n<li><b>SLA:</b> {{$json.sla}}</li> \n</ul>  <h3>Customer Message</h3>  \n<p>{{$json.message}}</p>  \n<h3>AI Response</h3>  \n<p>{{$json.ai_reply}}</p>",
         "options": {}
