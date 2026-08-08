@@ -1,0 +1,248 @@
+{
+  "name": "WF-4 Customer Email Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        -48
+      ],
+      "id": "5aeecc7f-efc0-468b-b4fe-42887ca6e9f5",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.customerEmail}}",
+        "subject": "=Support Ticket {{$json.ticket_id}} Created Successfully",
+        "message": "=<h2>🎫 Support Ticket Created Successfully</h2>\n\n<p>Hello <b>{{$json.customerName}}</b>,</p>\n\n<p>Thank you for contacting our support team.</p>\n\n<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\">\n<tr><td><b>Ticket ID</b></td><td>{{$json.ticket_id}}</td></tr>\n<tr><td><b>Category</b></td><td>{{$json.category}}</td></tr>\n<tr><td><b>Priority</b></td><td>{{$json.priority}}</td></tr>\n<tr><td><b>Department</b></td><td>{{$json.department}}</td></tr>\n<tr><td><b>Assigned Team</b></td><td>{{$json.assigned_to}}</td></tr>\n<tr><td><b>SLA</b></td><td>{{$json.sla}}</td></tr>\n</table>\n\n<h3>AI Initial Response</h3>\n\n<p>{{$json.ai_reply}}</p>\n\n<p>Regards,<br><b>AI Support Team</b></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        48
+      ],
+      "id": "8b334b3c-718d-43ca-a4b2-19619a2516a3",
+      "name": "Send a message",
+      "webhookId": "4623b553-3559-4e3d-a622-8a3950dd8c84",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJC2vn3C5q8cKpPI",
+          "name": "Gmail 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegramChatId}}",
+        "text": "=🎫 Ticket Created Successfully\n\nTicket ID: {{$json.ticket_id}}\n\nCategory: {{$json.category}}\nPriority: {{$json.priority}}\n\nAssigned Team: {{$json.assigned_to}}\n\nSLA: {{$json.sla}}\n\nAI Reply:\n{{$json.ai_reply}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📄 View Ticket",
+                    "additionalFields": {
+                      "callback_data": "=view_{{$json.ticket_id}}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✏️ Update Ticket",
+                    "additionalFields": {
+                      "callback_data": "=update_{{$json.ticket_id}}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "❌ Close Ticket",
+                    "additionalFields": {
+                      "callback_data": "=close_{{$json.ticket_id}}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "👨‍💻 Talk to Human",
+                    "additionalFields": {
+                      "callback_data": "=human_{{$json.ticket_id}}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        -144
+      ],
+      "id": "30323387-ee03-43f5-8d3e-460d9bdcb05f",
+      "name": "Send a text message",
+      "webhookId": "1dfb1082-e4b2-4bad-8fe6-540515aafea1",
+      "credentials": {
+        "telegramApi": {
+          "id": "QQjvfrtCdO2LAbHh",
+          "name": "n8n_AI_CS_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "093df449-c807-43a5-ac5a-5938bebd4d46",
+                    "leftValue": "={{$json.channel}}",
+                    "rightValue": "telegram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7bd75f4c-c21a-4c6d-925a-5b1363e255ad",
+                    "leftValue": "={{$json.channel}}",
+                    "rightValue": "email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -48
+      ],
+      "id": "6fd62a21-e565-40a4-8aab-6e5a8ca18fa5",
+      "name": "Switch"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "27ad2832-c206-4ea9-8198-b4ae6873de2e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e057c5411c039ef29ce0ab6d9b9dc2bacf4e6e56675b10f50e409a4db54117c6"
+  },
+  "nodeGroups": [],
+  "id": "cemM0OLOXcfonLIB",
+  "tags": [
+    {
+      "updatedAt": "2026-07-23T05:32:38.365Z",
+      "createdAt": "2026-07-23T05:32:38.365Z",
+      "id": "nllihrpcImq2tZpk",
+      "name": "with chatgpt"
+    }
+  ]
+}

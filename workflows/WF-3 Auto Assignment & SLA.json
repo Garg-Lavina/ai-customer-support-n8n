@@ -1,0 +1,65 @@
+{
+  "name": "WF-3 Auto Assignment & SLA",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -32
+      ],
+      "id": "bee7399b-34ea-46b6-b947-11cf682e6bd4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Assign team\nlet assigned_to = \"\";\n\nswitch (item.department) {\n  case \"Finance\":\n    assigned_to = \"Finance Team\";\n    break;\n\n  case \"Technical\":\n    assigned_to = \"Technical Support\";\n    break;\n\n  case \"Customer Success\":\n    assigned_to = \"Customer Support\";\n    break;\n\n  case \"Sales\":\n    assigned_to = \"Sales Team\";\n    break;\n\n  default:\n    assigned_to = \"General Support\";\n}\n\n// Assign SLA\nlet sla = \"\";\n\nswitch (item.priority) {\n  case \"High\":\n    sla = \"2 Hours\";\n    break;\n\n  case \"Medium\":\n    sla = \"8 Hours\";\n    break;\n\n  default:\n    sla = \"24 Hours\";\n}\n\nreturn [\n  {\n    json: {\n      ...item,\n      assigned_to,\n      sla\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        -32
+      ],
+      "id": "78bfd738-887b-4f41-98e1-26bb51fa2251",
+      "name": "Assign Team & SLA"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Assign Team & SLA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c6cd704f-f0b2-4c15-bf49-7bf53edb5281",
+  "meta": {
+    "instanceId": "e057c5411c039ef29ce0ab6d9b9dc2bacf4e6e56675b10f50e409a4db54117c6"
+  },
+  "nodeGroups": [],
+  "id": "ZWwMuZmxU7rAhUGm",
+  "tags": [
+    {
+      "updatedAt": "2026-07-23T05:32:38.365Z",
+      "createdAt": "2026-07-23T05:32:38.365Z",
+      "id": "nllihrpcImq2tZpk",
+      "name": "with chatgpt"
+    }
+  ]
+}

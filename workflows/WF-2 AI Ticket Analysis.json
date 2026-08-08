@@ -1,0 +1,175 @@
+{
+  "name": "WF-2 AI Ticket Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer Name:\n{{ $json.customerName }}\n\nSubject:\n{{ $json.subject }}\n\nMessage:\n{{ $json.message }}",
+        "options": {
+          "systemMessage": "You are an AI Customer Support Classifier.\n\nAnalyze the support ticket and return ONLY valid JSON.\n\nUse this format:\n\n{\n  \"category\": \"\",\n  \"priority\": \"\",\n  \"department\": \"\",\n  \"sentiment\": \"\",\n  \"ai_reply\": \"\"\n}\n\nRules:\n\nCategory must be one of:\n- Billing\n- Technical\n- Account\n- Refund\n- General\n\nPriority:\n- Low\n- Medium\n- High\n\nDepartment:\n- Finance\n- Technical Support\n- Account Team\n- Customer Success\n\nSentiment:\n- Positive\n- Neutral\n- Negative\n\nThe ai_reply should be professional, short (2-3 sentences), and empathetic.\n\nReturn ONLY JSON. No markdown. No explanation."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        704,
+        352
+      ],
+      "id": "de859214-d609-470b-be28-08f06018adbd",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Original data from Workflow 1\nconst original = $('When Executed by Another Workflow').first().json;\n\n// AI response\nconst ai = JSON.parse($json.output);\n\n// Merge both\nreturn [{\n  json: {\n    ...original,\n    ...ai\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        352
+      ],
+      "id": "229b07a4-3dec-443e-a55b-1ab9d3cbca1c",
+      "name": "Parse AI Response"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        624
+      ],
+      "id": "e1a6fef8-22cf-4fb4-a059-2d311ea3fda4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZMXTkvrP6lAbeV49",
+          "name": "Gemini Api 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: $input.first().json\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        352
+      ],
+      "id": "73b2ce25-e81d-4a84-8d4c-9672fc4b3887",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        576,
+        560
+      ],
+      "id": "cf5f47a3-6e41-4ae3-8431-e1615b218105",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "PojiDlcg2egJNFaH",
+          "name": "Groq API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a206e0cb-3035-4237-a405-155926afa5bb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e057c5411c039ef29ce0ab6d9b9dc2bacf4e6e56675b10f50e409a4db54117c6"
+  },
+  "nodeGroups": [],
+  "id": "4Q7f6okXXlwlS65c",
+  "tags": [
+    {
+      "updatedAt": "2026-07-23T05:32:38.365Z",
+      "createdAt": "2026-07-23T05:32:38.365Z",
+      "id": "nllihrpcImq2tZpk",
+      "name": "with chatgpt"
+    }
+  ]
+}

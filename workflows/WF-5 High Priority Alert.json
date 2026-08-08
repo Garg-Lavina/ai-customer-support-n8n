@@ -1,0 +1,152 @@
+{
+  "name": "WF-5 High Priority Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "bedb2447-314f-4de6-8d1d-c070a555bf74",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "40ba7990-0ac7-40c2-9cf6-8f142f73eaa6",
+              "leftValue": "={{$json.priority}}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "8392c653-1ae7-4fd8-9583-fafb6c54abe3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "lavina.garg2025@gmail.com",
+        "subject": "=🚨 High Priority Ticket: {{$json.ticket_id}}",
+        "message": "=<h2>🚨 High Priority Support Ticket</h2>  \n<p>A new high-priority ticket requires immediate attention.</p>  \n<ul> <li><b>Ticket ID:</b> {{$json.ticket_id}}</li>\n<li><b>Customer:</b> {{$json.customerName}}</li> \n<li><b>Email:</b> {{$json.customerEmail}}</li> \n<li><b>Category:</b> {{$json.category}}</li> \n<li><b>Department:</b> {{$json.department}}</li> \n<li><b>Assigned Team:</b> {{$json.assigned_to}}</li> \n<li><b>SLA:</b> {{$json.sla}}</li> \n</ul>  <h3>Customer Message</h3>  \n<p>{{$json.message}}</p>  \n<h3>AI Response</h3>  \n<p>{{$json.ai_reply}}</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -160
+      ],
+      "id": "39658893-2f5b-47e4-ab95-2b350312b28e",
+      "name": "Send a message",
+      "webhookId": "78730f57-c198-4440-a865-ab6d4e3965e0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJC2vn3C5q8cKpPI",
+          "name": "Gmail 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const original = $('When Executed by Another Workflow').first().json;\n\nreturn [\n  {\n    json: original\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "1bb43a68-9d5a-4d25-85ae-17c66146a83f",
+      "name": "Return Original Data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Original Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Return Original Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "75006f6e-ed2d-4b91-ab84-f2ed2eccf747",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e057c5411c039ef29ce0ab6d9b9dc2bacf4e6e56675b10f50e409a4db54117c6"
+  },
+  "nodeGroups": [],
+  "id": "aCs6sVPazHTfoNsp",
+  "tags": [
+    {
+      "updatedAt": "2026-07-23T05:32:38.365Z",
+      "createdAt": "2026-07-23T05:32:38.365Z",
+      "id": "nllihrpcImq2tZpk",
+      "name": "with chatgpt"
+    }
+  ]
+}

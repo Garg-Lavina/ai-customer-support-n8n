@@ -1,0 +1,832 @@
+{
+  "name": "WF-0 Multi Channel Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        -416
+      ],
+      "id": "ac64c9a7-d6b7-410e-a351-b6f2ae074218",
+      "name": "Telegram Trigger",
+      "webhookId": "6d3d5ea6-4e89-4520-a519-ea0391f65b3f",
+      "credentials": {
+        "telegramApi": {
+          "id": "QQjvfrtCdO2LAbHh",
+          "name": "n8n_AI_CS_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "-category:promotions -category:social -from:mailer-daemon@googlemail.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        576,
+        96
+      ],
+      "id": "3739bfde-035a-4bb6-b929-d3b7fdb8e418",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rJC2vn3C5q8cKpPI",
+          "name": "Gmail 1"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "970f6338-38d6-45dc-b9f5-0baab2b69cbd",
+              "name": "customerName",
+              "value": "={{ $json.From.split(\"<\")[0].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "fc75ae09-7a1d-4801-bb64-95fc18fa48f6",
+              "name": "customerEmail",
+              "value": "={{ $json.From.match(/<(.+)>/)[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "4825d291-a38f-45bc-8ee1-1fa31897bb7d",
+              "name": "subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "161b9344-2873-47c8-a7f0-684f8400d195",
+              "name": "message",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        96
+      ],
+      "id": "0285425f-663c-45c3-96aa-4349a1d3d09a",
+      "name": "Normalize Email"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BSPiJCtfijmZjr1d",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BSPiJCtfijmZjr1d",
+          "cachedResultName": "WF-1 Ticket Intake"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "732d26b9-d576-4652-b43c-85f706c84fb1",
+      "name": "Call 'WF-1 Ticket Intake'"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c595656c-2322-437e-aec5-daf6c8c01684",
+              "name": "customerName",
+              "value": "={{ $('Telegram Trigger').first().json.message.from.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "05d799f5-4a32-495a-96e6-fad5a6158c60",
+              "name": "customerEmail",
+              "value": "={{ 'telegram_' + $('Telegram Trigger').first().json.message.chat.id + '@telegram.local' }}",
+              "type": "string"
+            },
+            {
+              "id": "9282c32f-7080-4dcb-bd2c-eae7454aec8b",
+              "name": "subject",
+              "value": "Telegram Support Request",
+              "type": "string"
+            },
+            {
+              "id": "cae14e7d-b443-462c-a508-88f38da2af7d",
+              "name": "message",
+              "value": "={{ $('Telegram Trigger').first().json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "26f80691-a734-41c3-969c-bb40e37db309",
+              "name": "telegramChatId",
+              "value": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "7482ce94-be0b-43a3-8101-b431b74d3ea5",
+              "name": "=channel",
+              "value": "=telegram",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1008,
+        -96
+      ],
+      "id": "d0526c41-150f-4e1e-ad0e-6108ee404153",
+      "name": "Normalize Telegram"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XyKCfTJWKoQKLZ_Vd669ccSoL1oD1hi04-wj8JceQC4",
+          "mode": "list",
+          "cachedResultName": "SupportTickets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XyKCfTJWKoQKLZ_Vd669ccSoL1oD1hi04-wj8JceQC4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XyKCfTJWKoQKLZ_Vd669ccSoL1oD1hi04-wj8JceQC4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ticket_id",
+              "lookupValue": "={{ $json.ticket_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1008,
+        -288
+      ],
+      "id": "086f3308-7f52-4025-8a23-a40c3493bbbf",
+      "name": "Get existing Support Ticket",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QJo0Crb0hkfS3NuR",
+          "name": "Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "laVp1KmQxEUHEnQP",
+          "mode": "list",
+          "cachedResultName": "telegram_sessions",
+          "cachedResultUrl": "/projects/xayaafYcEXJpPRs4/datatables/laVp1KmQxEUHEnQP"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ String($node[\"Telegram Trigger\"].json.message.chat.id) }}"
+            },
+            {
+              "keyName": "action",
+              "keyValue": "update_ticket"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        -192
+      ],
+      "id": "55245b90-bd64-4dc4-b7fb-2a2e515ff5f7",
+      "name": "Get Session",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XyKCfTJWKoQKLZ_Vd669ccSoL1oD1hi04-wj8JceQC4",
+          "mode": "list",
+          "cachedResultName": "SupportTickets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XyKCfTJWKoQKLZ_Vd669ccSoL1oD1hi04-wj8JceQC4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XyKCfTJWKoQKLZ_Vd669ccSoL1oD1hi04-wj8JceQC4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket_id": "={{ $('Get Session').first().json.ticket_id }}",
+            "customerName": "={{ $json.customerName }}",
+            "customerEmail": "={{ $json.customerEmail }}",
+            "subject": "={{ $json.subject }}",
+            "category": "={{ $json.category }}",
+            "message": "={{ $('Telegram Trigger').first().json.message.text }}",
+            "status": "={{ $json.status }}",
+            "department": "={{ $json.department }}",
+            "sentiment": "={{ $json.sentiment }}",
+            "assigned_to": "={{ $json.assigned_to }}",
+            "priority": "={{ $json.priority }}",
+            "created_at": "={{ $json.created_at }}",
+            "ai_reply": "={{ $json.ai_reply }}",
+            "sla": "={{ $json.sla }}"
+          },
+          "matchingColumns": [
+            "ticket_id"
+          ],
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "customerName",
+              "displayName": "customerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customerEmail",
+              "displayName": "customerEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "assigned_to",
+              "displayName": "assigned_to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "department",
+              "displayName": "department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sentiment",
+              "displayName": "sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sla",
+              "displayName": "sla",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ai_reply",
+              "displayName": "ai_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1232,
+        -288
+      ],
+      "id": "5c14017d-8f00-4eac-bd02-5a29f5948a7f",
+      "name": "Update Support Ticket",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QJo0Crb0hkfS3NuR",
+          "name": "Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "54d3e5f2-186b-4443-a7e2-ddf3025a8c60",
+              "leftValue": "={{ $json.ticket_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        784,
+        -192
+      ],
+      "id": "84a23fd6-0983-42d5-95f1-8168ae437bc8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "value": "laVp1KmQxEUHEnQP",
+          "mode": "list",
+          "cachedResultName": "telegram_sessions",
+          "cachedResultUrl": "/projects/xayaafYcEXJpPRs4/datatables/laVp1KmQxEUHEnQP"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ String($node[\"Telegram Trigger\"].json.message.chat.id) }}"
+            },
+            {
+              "keyName": "action",
+              "keyValue": "update_ticket"
+            },
+            {
+              "keyName": "ticket_id",
+              "keyValue": "={{ $('Get Session').first().json.ticket_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1456,
+        -288
+      ],
+      "id": "3588683b-7f72-4408-ab00-424a16cbcaa7",
+      "name": "Delete Session",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=✅ Ticket Updated Successfully  \n🎫 Ticket ID: {{ $('Get Session').first().json.ticket_id }}  \n📝 Your new information has been added to the ticket. \nOur support team will review the updated details and assist you accordingly.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        -288
+      ],
+      "id": "5f87c90d-16f0-4648-8da4-ad88baf1e74b",
+      "name": "Send a text message",
+      "webhookId": "5a0f19ff-1a29-4196-a2c3-5e20670bc626",
+      "credentials": {
+        "telegramApi": {
+          "id": "QQjvfrtCdO2LAbHh",
+          "name": "n8n_AI_CS_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OEaxnqTMyG6zeh36",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OEaxnqTMyG6zeh36",
+          "cachedResultName": "WF-6 Telegram Button Handler"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        -368
+      ],
+      "id": "417ec7eb-c500-4951-b654-62f86fdb5074",
+      "name": "Call 'WF-6 Telegram Button Handler'"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0dc7c92d-df16-4684-b010-7f888ab11769",
+              "leftValue": "={{ $json.callback_query?.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        -336
+      ],
+      "id": "dfd48528-37c9-4bf5-b078-151b883bf07a",
+      "name": "callback_exists"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d5a73d83-fc7b-4aef-a32e-617d70c34db0",
+              "leftValue": "={{ $json.message?.text || '' }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        80,
+        -416
+      ],
+      "id": "8fa80b33-547f-4523-ab17-85b8d09414c4",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=👋 Welcome to AI Customer Support!  \n\nI can help you create and manage your support tickets.  \n📝 Simply send your issue as a message to create a new ticket.  \n\nOnce your ticket is created, you can:  \n📄 View Ticket \n✏️ Update Ticket \n❌ Close Ticket \n👨‍💻 Talk to Human \n\nPlease describe your issue to get started. 😊",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        -464
+      ],
+      "id": "b7481663-8fc2-4137-8164-e1ddd3cb2b03",
+      "name": "Send a text message1",
+      "webhookId": "5607e04a-93d7-4721-a170-6b7f8d8cbf1e",
+      "credentials": {
+        "telegramApi": {
+          "id": "QQjvfrtCdO2LAbHh",
+          "name": "n8n_AI_CS_Bot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Email": {
+      "main": [
+        [
+          {
+            "node": "Call 'WF-1 Ticket Intake'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Telegram": {
+      "main": [
+        [
+          {
+            "node": "Call 'WF-1 Ticket Intake'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get existing Support Ticket": {
+      "main": [
+        [
+          {
+            "node": "Update Support Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Session": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Support Ticket": {
+      "main": [
+        [
+          {
+            "node": "Delete Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get existing Support Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normalize Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Session": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback_exists": {
+      "main": [
+        [
+          {
+            "node": "Call 'WF-6 Telegram Button Handler'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "callback_exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1cc7f6b2-0bf9-4d1d-9356-dccb2ca415fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e057c5411c039ef29ce0ab6d9b9dc2bacf4e6e56675b10f50e409a4db54117c6"
+  },
+  "nodeGroups": [],
+  "id": "3JxwipeoxH8Ovb5I",
+  "tags": [
+    {
+      "updatedAt": "2026-07-23T05:32:38.365Z",
+      "createdAt": "2026-07-23T05:32:38.365Z",
+      "id": "nllihrpcImq2tZpk",
+      "name": "with chatgpt"
+    }
+  ]
+}
